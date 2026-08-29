@@ -1,0 +1,16 @@
+[package]
+name = "happy-wakey-sidecar-contract-e2e"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+publish = false
+
+[dependencies]
+happy-wakey-sidecar = { git = "https://github.com/happy-wakey/happy-wakey-sidecar.rs", rev = "6bee12449fb421b142d3c5836bbc0547f805462a" }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = "deny"
+pedantic = "warn"
