@@ -1,0 +1,32 @@
+name: external-consumer-ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sidecar-contract-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.88.0 --profile minimal --component rustfmt,clippy
+      - name: Format
+        run: cargo +1.88.0 fmt --all -- --check
+      - name: Install and certify exact sidecar revision
+        run: |
+          export PATH="$HOME/.rustup/toolchains/1.88.0-x86_64-unknown-linux-gnu/bin:$PATH"
+          scripts/certify.sh
